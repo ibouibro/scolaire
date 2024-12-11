@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>GESTION SCOLAIRE</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="/assets/vendor/quill/quill.snow.css" rel="stylesheet">
+  <link href="/assets/vendor/quill/quill.bubble.css" rel="stylesheet">
+  <link href="/assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+  <link href="/assets/vendor/simple-datatables/style.css" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="/assets/css/style.css" rel="stylesheet">
+
+  <!-- =======================================================
+  * Template Name: NiceAdmin
+  * Updated: Jan 29 2024 with Bootstrap v5.3.2
+  * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+</head>
+
+<body>
+  <style>
+    .table-container {
+      max-width: 100%;
+      overflow-x: auto;
+      border: 1px solid #ccc;
+      padding: 10px;
+  }
+  
+  /* Table avec une largeur fixe pour ne pas s’étendre */
+  table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 600px; /* Optionnel : définit une largeur minimale pour éviter les colonnes trop étroites */
+  }
+  
+  th, td {
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      text-align: left;
+      white-space: nowrap; /* Empêche les colonnes de se plier */
+  }
+  
+  th {
+      background-color: #f4f4f4;
+  }
+
+  .user-profile {
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    max-width: 400px;
+    width: 90%;
+}
+
+.profile-header {
+    text-align: center;
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    color: #fff;
+    padding: 30px 20px;
+}
+
+.profile-picture {
+    border-radius: 50%;
+    border: 5px solid #fff;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+}
+
+.user-name {
+    font-size: 24px;
+    margin: 10px 0 5px;
+}
+
+.user-title {
+    font-size: 16px;
+    font-weight: 300;
+}
+
+.profile-details {
+    padding: 20px;
+}
+
+.profile-details h2 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    color: #6a11cb;
+}
+
+.profile-details ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.profile-details ul li {
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.profile-details ul li strong {
+    font-weight: bold;
+}
+
+  </style>
+  <!-- ======= Header ======= -->
+  <header id="header" class="header fixed-top d-flex align-items-center" style="background:rgba(43, 55, 223, 0.386);">
+
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="#" class="logo d-flex align-items-center">
+        
+        <div  style="display:flex;flex-direction:row;justify-content:center;"><div style="color:white;font-size:20px;">GESTION</div><div style="color:blue;font-size:20px;"><b>SCHOOL</b></div></div>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div><!-- End Logo -->
+
+   
+    <nav class="header-nav ms-auto">
+     
+      
+        <ul class="d-flex align-items-center">
+  <% if(!locals?.role){ %>
+          <li class="nav-item" style="margin-right:20px;">
+            <a class="nav-link collapsed" href="/login_form">
+              <i class="bi bi-arrow-right-circle-fill"></i> <span>se connecter</span>
+            </a>
+           
+          </li>
+          <% } %>
+
+
+          
+
+      </ul>
+    </nav><!-- End Icons Navigation -->
+
+  </header><!-- End Header -->
+
+  <!-- ======= Sidebar ======= -->
+  <aside id="sidebar" class="sidebar" style="background:rgba(43, 55, 223, 0.386);">
+
+    <ul class="sidebar-nav" id="sidebar-nav">
+
+      <li class="nav-item">
+        <a class="nav-link " href="/homepage">
+          <i class="bi bi-grid"></i>
+          <span>Dashboard</span>
+        </a>
+      </li><!-- End Dashboard Nav -->
+ <% if(locals?.role){
+  if(role=="administrateur"){ %>
+     
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#components-nav1" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-person-fill"></i><span>Utilisateurs</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="components-nav1" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="/eleves">
+              <i class="bi bi-circle"></i><span>liste des élèves</span>
+            </a>
+          </li>
+          <li>
+            <a href="/autres_utilisateurs">
+              <i class="bi bi-circle"></i><span>Autres utilisateurs</span>
+            </a>
+          </li>
+          <li>
+            <a href="/ajouter_utilisateur_form">
+              <i class="bi bi-circle"></i><span>créer un utilisateur</span>
+            </a>
+          </li>
+</ul></li>
+
+<li class="nav-item">
+  <a class="nav-link collapsed" href="/classes">
+    <i class="bi bi-plus-circle"></i><span>classes</span>
+  </a>
+</li>
+
+<li class="nav-item">
+  <a class="nav-link collapsed" href="/emploi">
+    <i class="bi bi-plus-circle"></i><span>emploi du temps</span>
+  </a>
+</li>
+
+<li class="nav-item">
+  <a class="nav-link collapsed" href="/matieres">
+    <i class="bi bi-plus-circle"></i><span>matières</span>
+  </a>
+</li>
+
+<li class="nav-item">
+  <a class="nav-link collapsed" href="/assignations">
+    <i class="bi bi-plus-circle"></i><span>assigner les classes</span>
+  </a>
+</li>
+<% } %>
+
+<li class="nav-item">
+  <a class="nav-link collapsed" href="/evaluations">
+    <i class="bi bi-plus-circle"></i><span>évaluations</span>
+  </a>
+</li>
+
+<% } %>
+<% if(!locals.role){ %>
+<li class="nav-item">
+  <a class="nav-link collapsed" href="/preinscription_form">
+    <i class="bi bi-plus-circle"></i><span>préinscription</span>
+  </a>
+ 
+</li><!-- End Components Nav -->
+<% } %>
+<% if(locals?.role){ %>
+   
+    <li class="nav-item">
+      <a class="nav-link collapsed" href="/deconnecter">
+        <i class="bi bi-arrow-left-circle-fill"></i><span>se déconnecter</span>
+      </a>
+     
+    </li><!-- End Components Nav -->
+    <% } %>
+    
+    </ul>
+    
+  </aside><!-- End Sidebar-->
+ 

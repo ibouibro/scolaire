@@ -1,0 +1,374 @@
+<%- include('header') -%>
+
+<main id="main" class="main">
+
+    
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+            <div class="pt-4 pb-2">
+                <h5 class="card-title text-center pb-0 fs-4">CLASSES et ENSEIGNANTS</h5>
+                 </div>
+                 <div class="pt-4 pb-2">
+                    <button type="button" class="btn btn-primary col-lg-3" data-bs-toggle="modal" data-bs-target="#ajouter">
+                        assigner une classe
+                      </button> </div>
+          
+          <div class="card">
+            <div class="card-body table-container">
+
+
+
+
+                <% if(locals?.message){ %>
+                      
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                      <i class="bi bi-check-circle me-1"></i>
+                      <%= message %> 
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+    
+                    <% } %>
+                   
+                  <% if(locals?.assignations){ %>
+                  <table class="table datatable">
+                    <thead>
+                      <tr>
+                        
+                        
+                        <th>enseignant</th>
+                        <th>année</th>
+                        <th>classe</th>
+                        <th>matière</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <%  for(var i=0;i < assignations.length ; i++){  %>
+                      <tr>
+                        
+                        <td><%= assignations[i].prenom %> <%= assignations[i].nom %></td>
+                        <td><%= assignations[i].annee %></td>
+                        <td><%= assignations[i].classe %> <%= assignations[i].niveau %></td>
+                        <td><%= assignations[i].matiere %></td>
+                       
+                        <td> 
+                          <% 
+                          let del= "del"+assignations[i].id;
+                      let delx= "del"+assignations[i].id+"x";
+                      let dlink = "/supprimer_assignation/?id="+assignations[i].id;
+                      let target = "#modifier"+assignations[i].id;
+                            %>
+                          <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="<%= target %>">modifier</button>
+                        
+                          
+                           
+                          
+      
+                             <i class="bi bi-trash" data-bs-toggle="tooltip" style="margin-left:10px;cursor:pointer;" data-bs-placement="top" title="supprimer" onclick="sup('<%= del %>')" ></i>
+                             <a href="<%= dlink %>" id="<%= delx %>"></a>
+                            
+                        
+                        </td>
+                           </tr>
+                    <% } %>
+                
+                    </tbody>
+                  </table>
+                  <% }else{ %>
+    
+                    Aucune classe trouvée 
+                    <% } %>
+                  <!-- End Table with stripped rows -->
+
+                 
+             </div>
+            </div>
+        </div>
+      </div>
+    </section>
+</main>
+
+
+
+<% for(var i=0;i < assignations.length;i++){
+    
+    let target = "modifier"+assignations[i].id;
+    let id="m_select"+assignations[i].id;
+    let id1 = "m_select"+assignations[i].id+"1";
+    let idd="a_select"+assignations[i].id;
+    let idd1 = "a_select"+assignations[i].id+"1";
+    %>
+
+
+    <div class="modal fade" id="<%= target %>" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Modifier une assignation de la classe : <%= assignations[i].classe %> <%= assignations[i].niveau %> </h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="row g-4 needs-validation" method="post" action="/modifier_assignation_classe">
+                  
+                    <div  class="row g-4 needs-validation">
+                        <div class="col-12">
+                            <label for="yourEmail" class="form-label"> année scolaire </label>
+                            <select class="form-select" id="<%= idd %>"   name="annee" required aria-label="Default select example">
+                                <% let p = currentYear-1;
+                                let s = currentYear+1;
+                                let a1 = p+" - "+currentYear;
+                                let a2 = currentYear+" - "+s;
+                                %>  
+                                
+                                
+                                <option value="<%= assignations[i].annee %>"><%= assignations[i].annee %></option>
+                                <% if(assignations[i].annee != a1){ %>
+                                <option value="<%= a1 %>"><%= a1 %></option>
+                                <% } %>
+                                <% if(assignations[i].annee != a2){ %>
+                                    <option value="<%= a2 %>"><%= a2 %></option>
+                                    <% } %>
+                              </select>
+                            <div class="invalid-feedback"></div>
+                           </div>
+                        </div>
+                           <div id = "<%= idd1 %>" class="row g-4 needs-validation" >
+                        
+    
+                           
+                        <div class="col-12">
+                            <label for="yourEmail" class="form-label"> matière </label>
+                            <select class="form-select" id="<%= id %>" onchange="myFunction12(event)"  name="matiere" required aria-label="Default select example">
+                                <option value="<%= assignations[i].id_matiere %>"><%= assignations[i].matiere %></option>
+                                <% for(var j=0; j < matieres.length; j++){
+                                    let x=0;
+                                    for(var k=0; k< assignations.length;k++){ 
+                                    if(matieres[j].id == assignations[k].id_matiere && assignations[k].id_classe == assignations[i].id_classe && assignations[k].annee == assignations[i].annee ){
+                                        x = x+1;
+                                         } %>   <% } if(x==0){ %> <option value="<%= matieres[j].id %>"> <%= matieres[j].nom %> </option> <% } } %>
+                            
+                              </select>
+                            <div class="invalid-feedback"></div>
+                           </div>
+    
+                           <div class="col-12">
+                            <label for="yourEmail" class="form-label"> enseignant </label>
+                            <select class="form-select" id="<%= id1 %>"   name="enseignant" required aria-label="Default select example">
+                                <option value="<%= assignations[i].id_user %>"><%= assignations[i].prenom %> <%= assignations[i].nom %> </option>
+                                <% for(var j=0; j< enseignants.length;j++){
+                                    if(enseignants[j].id_matiere == assignations[i].id_matiere && enseignants[j].id != assignations[i].id_user){ %>
+                                     <option value="<%= enseignants[j].id %>"><%= enseignants[j].prenom %> <%= enseignants[j].nom %></option>
+                                        <% }} %>
+                              </select>
+                            <div class="invalid-feedback"></div>
+                           </div>
+                        </div>
+    
+                      
+
+                       <div class="col-12" id="last">
+                        <button class="btn btn-primary w-100" type="submit">Enregistrer</button>
+                      </div>
+                <input type="hidden" name ="id" value="<%= assignations[i].id_classe %>">
+                </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            
+            </div>
+          </div>
+        </div>
+      </div><!-- End Large Modal-->
+
+    <% } %>
+
+
+    <div class="modal fade" id="ajouter" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Assigner une classe</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="row g-4 needs-validation" method="post" action="/assigner_classe">
+                    <div  class="row g-4 needs-validation">
+                    <div class="col-12">
+                        <label for="yourEmail" class="form-label"> année scolaire </label>
+                        <select class="form-select" id="a_select" onchange="remake()"  name="annee" required aria-label="Default select example">
+                            <% let p = currentYear-1;
+                            let s = currentYear+1;
+                            let a1 = p+" - "+currentYear;
+                            let a2 = currentYear+" - "+s;
+                            %>  
+                            <option value="">choisir une année scolaire</option>
+                            <option value="<%= a1 %>"><%= a1 %></option>
+                            <option value="<%= a2 %>"><%= a2 %></option>
+                          </select>
+                        <div class="invalid-feedback"></div>
+                       </div>
+                    </div>
+                       <div id = "down" class="row g-4 needs-validation" >
+                    <div class="col-12">
+                        <label for="yourEmail" class="form-label"> classe </label>
+                        <select class="form-select" onchange="myFunction(event)"   name="classe" required aria-label="Default select example">
+                            <option value="">Choisir une classe</option>
+                          <% for (var i=0;i< classes.length;i++){ %>  
+                       <option value="<%= classes[i].id %>"><%= classes[i].nom %> <%= classes[i].niveau %></option>
+                          <% } %>
+                          </select>
+                        <div class="invalid-feedback">Please enter your classe</div>
+                       </div>
+
+                       
+                    <div class="col-12">
+                        <label for="yourEmail" class="form-label"> matiere </label>
+                        <select class="form-select" id="m_select" onchange="myFunction1(event)"  name="matiere" required aria-label="Default select example">
+                             </select>
+                        <div class="invalid-feedback"></div>
+                       </div>
+
+                       <div class="col-12">
+                        <label for="yourEmail" class="form-label"> enseignant </label>
+                        <select class="form-select" id="e_select"   name="enseignant" required aria-label="Default select example">
+                            
+                            
+                        </select>
+                        <div class="invalid-feedback"></div>
+                       </div>
+                    </div>
+
+
+
+
+                      
+                       <div class="col-12" id="last">
+                        <button class="btn btn-primary w-100" type="submit" id="submit_" >Enregistrer</button>
+                      </div>
+                
+                </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            
+            </div>
+          </div>
+        </div>
+      </div><!-- End Large Modal-->
+
+
+<script>
+
+function sup(x)
+                    {
+                      let s = x+"x";
+                      alert(s)
+                      if(confirm("voulez-vous supprimer cette assignation ?")== true){
+                        document.getElementById(s).click();
+                      }
+                    }
+
+function myFunction(event)
+{
+    
+    const ass = <%- JSON.stringify(assignations) %>;
+    const mat = <%- JSON.stringify(matieres) %>;
+    
+    span = `<option value="">choisir une matière</option>`;
+    mat.forEach(element => {
+        
+        let x=0;
+        ass.forEach(element1 => {
+           if(element.id == element1.id_matiere && event.target.value == element1.id_classe && document.getElementById("a_select").value == element1.annee){
+x=x+1;
+           }
+        })
+
+        if(x==0)
+        {
+            span+=`<option value=${element.id}>${element.nom}</option>`
+        }
+    });
+
+    document.getElementById("m_select").innerHTML=span;
+}
+
+
+function myFunction1(event)
+{
+    
+    const ens = <%- JSON.stringify(enseignants) %>;
+    span = `<option value="">choisir un enseignant</option>`;
+
+ens.forEach(element => {
+    
+        if(element.id_matiere == event.target.value)
+        {
+           
+            span+= `<option value=${element.id}>${element.prenom} ${element.nom}</option>`;
+        }
+    });
+    document.getElementById("e_select").innerHTML=span;
+
+}
+
+function myFunction12(event)
+{
+    
+    const ens = <%- JSON.stringify(enseignants) %>;
+    span = `<option value="">choisir un enseignant</option>`;
+
+ens.forEach(element => {
+    
+        if(element.id_matiere == event.target.value)
+        {
+           
+            span+= `<option value=${element.id}>${element.prenom} ${element.nom}</option>`;
+        }
+    });
+    let s = event.target.id+"1";
+    document.getElementById(s).innerHTML=span;
+
+}
+
+
+function remake(){
+    let span =  ` <div class="col-12">
+                        <label for="yourEmail" class="form-label"> classe </label>
+                        <select class="form-select" onchange="myFunction(event)"   name="classe" required aria-label="Default select example">
+                            <option value="">Choisir une classe</option>
+                          <% for (var i=0;i< classes.length;i++){ %>  
+                       <option value="<%= classes[i].id %>"><%= classes[i].nom %> <%= classes[i].niveau %></option>
+                          <% } %>
+                          </select>
+                        <div class="invalid-feedback">Please enter your classe</div>
+                       </div>
+
+                       
+                    <div class="col-12">
+                        <label for="yourEmail" class="form-label"> matiere </label>
+                        <select class="form-select" id="m_select" onchange="myFunction1(event)"  name="matiere" required aria-label="Default select example">
+                            
+                          </select>
+                        <div class="invalid-feedback"></div>
+                       </div>
+
+                       <div class="col-12">
+                        <label for="yourEmail" class="form-label"> enseignant </label>
+                        <select class="form-select" id="e_select"   name="enseignant" required aria-label="Default select example">
+                            
+                          </select>
+                        <div class="invalid-feedback"></div>
+                       </div>`;
+
+                       document.getElementById("down").innerHTML="";
+                       document.getElementById("down").innerHTML=span;
+}
+
+
+
+</script>
+
+<%- include('footer') -%>

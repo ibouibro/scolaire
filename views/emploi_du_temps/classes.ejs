@@ -1,0 +1,87 @@
+<%- include('../header') -%>
+
+<main id="main" class="main">
+
+    
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+            <div class="pt-4 pb-2">
+                <h5 class="card-title text-center pb-0 fs-4">EMPLOIS DU TEMPS</h5>
+                 </div>
+                
+          
+          <div class="card">
+            <div class="card-body table-container">
+
+
+
+
+                <% if(locals?.message){ %>
+                      
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                      <i class="bi bi-check-circle me-1"></i>
+                      <%= message %> 
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+    
+                    <% } %>
+                   
+                  
+                  <table class="table datatable">
+                    <thead>
+                      <tr>
+                        
+                        
+                        <th>classe</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <%  for(var i=0;i < classes_c.length ; i++){  %>
+                      <tr>
+                        
+                        <td><%= classes_c[i].nom %> <%= classes_c[i].niveau %></td>
+                        <td> 
+                          <% 
+                      let dlink = "/creer_emploi_form/?id="+classes_c[i].id;
+                    
+                            %>
+                          <a href="<%= dlink %>" type="button" class="btn btn-primary btn-sm">créer</a>
+                        
+                        
+                        </td>
+                           </tr>
+                    <% } %>
+
+                    <%  for(var i=0;i < classes_m.length ; i++){  %>
+                        <tr>
+                          
+                          <td><%= classes_m[i].nom %> <%= classes_m[i].niveau %></td>
+                          <td> 
+                            <% 
+                        let dlink1 = "/voir_emploi/?id="+classes_m[i].id;
+                      
+                              %>
+                            <a href="<%= dlink1 %>" type="button" class="btn btn-warning btn-sm">voir</a>
+                          
+                          
+                          </td>
+                             </tr>
+                      <% } %>
+                
+                    </tbody>
+                  </table>
+                 
+                  <!-- End Table with stripped rows -->
+
+                 
+             </div>
+            </div>
+        </div>
+      </div>
+    </section>
+</main>
+
+<%- include('../footer') -%>

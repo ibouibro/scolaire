@@ -1,0 +1,123 @@
+<%- include('../header') -%>
+
+<main id="main" class="main">
+
+    
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+            <div class="pt-4 pb-2">
+                <h5 class="card-title text-center pb-0 fs-4">EMPLOIS DU TEMPS DE :  <%= cours[0].nom %>  <%= cours[0].niveau %> </h5>
+                 </div>
+          <div class="card">
+            
+            <div class="card-body table-container">
+
+              
+              <% if(locals?.message){ %>
+                      
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                  <i class="bi bi-check-circle me-1"></i>
+                  <%= message %> 
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
+                <% } %>
+              <form action="/modifier_emploi" method="post">
+              <input type="hidden" name="id" value="<%= cours[0].id %>">
+              <table class="table datatable">
+                <thead>
+                  <tr>
+                    <th>Horaires</th>
+        
+                    <th>Lundi<%= "  " %></th>
+                    <th>Mardi<%= "  " %></th>
+                    <th>Mercredi</th>
+                    <th>jeudi<%= "  " %></th>
+                    <th>Vendredi</th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                  <% var jours = ["l","m","me","j","v"];
+                  for(var j=8;j < 17;j++ ){
+                    let s = j+1;
+                    let hor = j+"H - "+s+"H";
+                  %>
+                  <tr>
+                    <td><%= hor %>
+                    </td>
+                    <% for(var k=0;k<jours.length;k++) {
+                      let id =jours[k]+j;
+                       %>
+                    <td id="<%= id %>" onclick="myFunction3(event)" style="cursor:pointer;">
+                     
+                      <% for(var i=0;i< cours.length;i++){
+                      if(cours[i].heure == id){
+                        if(cours[i].matiere !== "undefined"){
+                        %>
+                        <%= cours[i].matiere %>
+                        <input type="hidden" name="<%= id %>" value="<%= cours[i].matiere %>">
+                        <% }else{ %>
+                        <input type="hidden">
+                        <%
+                      }}
+                    } %></td>
+                    <% } %>
+                     </tr> 
+                     <% } %>
+                
+
+            
+                </tbody>
+              </table>
+              <div class="col-12" id="last">
+                <button class="btn btn-primary w-100" type="submit">Enregistrer</button>
+              </div>
+            </form>
+             
+              <!-- End Table with stripped rows -->
+            <script>
+              
+
+             function myFunction3(event)
+              {
+                let span = ``;
+                     
+                          let val = event.target.children[0].value;
+                          if(val=="" || val == null)
+                          {
+                            span= `<select class="form-select"   name="${event.target.id}" required aria-label="Default select example">
+                            <option value="">Choisir une matière</option>
+                          <% for (var i=0;i< matieres.length;i++){ %>  
+                       <option value="<%= matieres[i].nom %>"><%= matieres[i].nom %></option>
+                          <% } %>
+                          </select>`;
+                          }else{
+                            span= `<select class="form-select"   name="${event.target.id}" required aria-label="Default select example">
+                            <option  value="${val}">${val}</option>
+                          <% for (var i=0;i< matieres.length;i++){ 
+                          
+                          %>  
+                       <option value="<%= matieres[i].nom %>"><%= matieres[i].nom %></option>
+                          <% } %>
+                          </select>`;
+                          }
+
+                          event.target.innerHTML=span;
+                          event.target.onclick="";
+
+              }
+
+            </script>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main><!-- End #main -->
+
+  <%- include('../footer') -%>

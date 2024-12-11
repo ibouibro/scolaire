@@ -1,0 +1,82 @@
+<%- include('../header') -%>
+
+<main id="main" class="main">
+
+    
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+            <div class="pt-4 pb-2">
+                <h5 class="card-title text-center pb-0 fs-4">NOTES : <%= notes[0].type %> du <%= notes[0].semestre %> semestre , <%= notes[0].classe %> <%= notes[0].niveau %>  </h5>
+                 </div>
+                 <div class="pt-4 pb-2 col-lg-3"><%= notes[0].matiere %> </div>
+          <div class="card">
+            <div class="card-body table-container">
+
+
+
+
+                <% if(locals?.message){ %>
+                      
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                      <i class="bi bi-check-circle me-1"></i>
+                      <%= message %> 
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+    
+                    <% } %>
+                   
+                  <% if(locals?.notes){ %>
+                    <form method="post" action="/modifier_notes">
+                        <input type="hidden" name="id_evaluation" value="<%= notes[0].id_evaluation %>">
+                  <table class="table datatable">
+                    <thead>
+                      <tr>
+                        
+                        
+                        <th>nom</th>
+                        <th>note</th>
+                        
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <%  for(var i=0;i < notes.length ; i++){  %>
+                      <tr>
+                        
+                        <td><%= notes[i].prenom %> <%= notes[i].nom %> <input type="hidden" name = "idd[]" value="<%= notes[i].id_eleve %>"> </td>
+                        <td style="cursor:pointer;" onclick="myFunction4(event)"><%= notes[i].valeur %> <input type="hidden" name="valeur[]" value="<%= notes[i].valeur %>"> </td>
+                       
+                           </tr>
+                    <% } %>
+                
+                    </tbody>
+                  </table>
+                  <div class="col-12" id="last">
+                    <button class="btn btn-primary w-100" type="submit">Enregistrer</button>
+                  </div>
+                  </form>
+                  <% }else{ %>
+    
+                    Aucune note trouvée 
+                    <% } %>
+                  <!-- End Table with stripped rows -->
+
+                 
+             </div>
+            </div>
+        </div>
+      </div>
+    </section>
+</main>
+
+<script>
+    function myFunction4(event)
+    {
+        let val = event.target.children[0].value;
+        let span = `<input type="number"  min="0" max="20" name="valeur[]" value =${val} >`;
+        event.target.innerHTML = span;
+    }
+</script>
+
+<%- include('../footer') -%>

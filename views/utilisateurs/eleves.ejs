@@ -1,0 +1,247 @@
+<%- include('../header') -%>
+
+<main id="main" class="main">
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+            <div class="pt-4 pb-2">
+                <h5 class="card-title text-center pb-0 fs-4">LISTE ELEVES</h5>
+                 </div>
+          <div class="card">
+            
+            <div class="card-body table-container">
+
+              
+              <% if(locals?.message){ %>
+                      
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                  <i class="bi bi-check-circle me-1"></i>
+                  <%= message %> 
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
+                <% } %>
+              
+              <% if(locals?.eleves){ %>
+              <table class="table datatable">
+                <thead>
+                  <tr>
+                    <th>Nom</th>
+        
+                    <th>Email</th>
+                    <th>Tél</th>
+                    <th>profil</th>
+                    <th>classe</th>
+                     <th>Admission</th>
+                     <th>Documents</th>
+                     
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <%  for(var i=0;i < eleves.length ; i++){  %>
+                  <tr>
+                    <%  if(eleves[i].admis != "non"){ 
+                        let targetx ="#profil"+eleves[i].id; %>
+                    
+                    
+                    <td><%= eleves[i].prenom %> <%= eleves[i].nom %></td>
+                    <td><%= eleves[i].email %></td>
+                    <td><%= eleves[i].tel %></td>
+                    <td><img src="<%= eleves[i].path %>  " style="width:19px;height:19px;"  data-bs-toggle="modal" data-bs-target="<%= targetx %>" alt="profil"></td>
+                    <td><%= eleves[i].classe %> <%= eleves[i].niveau %></td>
+                    <%  if(eleves[i].admis == "oui"){  %>
+                    <td>admis</td>
+                    <% }else{ %>
+                    <td><%= eleves[i].admis %></td>
+                    <% }  %>
+                    <td><%  for(var j=0;j<document.length; j++)
+                        {
+                          if(document[j].id_user == eleves[i].id)
+                          { let dlink = "/one_doc/?id="+document[j].id;
+                         
+                         %>
+                            <a href="<%= dlink %>" ><i class="bi bi-file-pdf-fill"></i>  </a>  
+                         <% }} %></td>
+                    <td>
+                      <% 
+                      let dlink = "/accepter_admission/?id="+eleves[i].id;
+                      let dlink1 = "/refuser_admission/?id="+eleves[i].id;
+                      let targety ="#parent"+eleves[i].id;
+                      if(eleves[i].admis != "oui"){
+                        %>
+                      
+                      
+                      <a href="<%= dlink %>" type="button" class="btn btn-primary btn-sm" >accepter</a>
+                      <Button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="<%= targety %>" >parent</Button>
+                      
+                      <% }else{
+                        
+                        %>
+                      <a href="<%= dlink1 %>" type="button" class="btn btn-warning btn-sm" >refuser</a>
+                      <Button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="<%= targety %>" >parent</Button>
+                      
+                      <% }
+                        %>
+                    </td>
+                              
+                <% } %>  <%  if(eleves[i].admis == "non"){
+                    let targetx ="#profil"+eleves[i].id;  %>
+                    
+                    
+                    <td><%= eleves[i].prenom %> <%= eleves[i].nom %></td>
+                    <td><%= eleves[i].email %></td>
+                    <td><%= eleves[i].tel %></td>
+                    <td> <td><img src="<%= eleves[i].path %>" style="width:19px;height:19px;"  data-bs-toggle="modal" data-bs-target="<%= targetx %>" alt="profil"></td>
+                </td>
+                    <td><%= eleves[i].classe %></td>
+                    <%  if(eleves[i].admis == "oui"){  %>
+                    <td>admis</td>
+                    <% }else{ %>
+                    <td><%= eleves[i].admis %></td>
+                    <% }  %>
+                    <td><%  for(var j=0;j<document.length; j++)
+                        {
+                          if(document[j].id_user == eleves[i].id)
+                          { let dlink = "/one_doc/?id="+document[j].id;
+                         
+                         %>
+                            <a href="<%= dlink %>" ><i class="bi bi-file-pdf-fill"></i>  </a>  
+                         <% }} %></td>
+                    <td>
+                      <% 
+                      let dlink = "/accepter_admission/?id="+eleves[i].id;
+                      let dlink1 = "/refuser_admission/?id="+eleves[i].id;
+
+                      let targety ="#parent"+eleves[i].id;
+                        %>
+                      
+                      
+                      <a href="<%= dlink %>" type="button" class="btn btn-primary btn-sm" >accepter</a>
+                      
+                      <Button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="<%= targety %>" >parent</Button>
+                      
+                      
+                    </td>
+                              
+                <% } %> </tr>  <% } %>
+            
+                </tbody>
+              </table>
+              <% }else{ %>
+
+                Aucun élève trouvé 
+                <% } %>
+              <!-- End Table with stripped rows -->
+            <script>
+              function sup(x)
+              {
+                let s = x+"x";
+                if(confirm("voulez-vous supprimer cette intervention ?")== true){
+                  document.getElementById(s).click();
+                }
+              }
+            </script>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main><!-- End #main -->
+
+
+  <% for(var j=0;j< eleves.length;j++){
+    let targety = "parent"+eleves[j].id; %>
+  
+    <div class="modal fade" id="<%= targety %>" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Parent de <%= eleves[j].prenom %> <%= eleves[j].nom %> </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" style="display:flex;justify-content:center;flex-direction:row;text-align:center;">
+         
+            <% for(var i=0;i< parents.length;i++){ 
+               if(eleves[j].parent == parents[i].id){ %>
+                
+
+                <div class="user-profile">
+                    <div class="profile-header">
+                        <img src="<%= parents[i].path %>" alt="Photo de profil" class="profile-picture">
+                        <h1 class="user-name"><%= parents[i].prenom %> <%= parents[i].nom %></h1>
+                        
+                    </div>
+                    <div class="profile-details">
+                        <h2>Informations personnelles</h2>
+                        <ul>
+                            <li><strong>Email :</strong> <%= parents[i].email %></li>
+                            <li><strong>Téléphone :</strong> <%= parents[i].tel %></li>
+                        </ul>
+                    </div>
+                </div> 
+                
+
+
+                <% }} %>
+            </div>
+          
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          
+          </div>
+        </div>
+      </div>
+    </div><!-- End Large Modal-->
+  
+  
+    <% }  %>
+
+
+    <% for(var j=0;j< eleves.length;j++){
+        let targetx = "profil"+eleves[j].id; %>
+      
+        <div class="modal fade" id="<%= targetx %>" tabindex="-1">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Photo de <%= eleves[j].prenom %> <%= eleves[j].nom %> </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body" style="display:flex;justify-content:center;flex-direction:row;text-align:center;">
+             
+               
+                    
+    
+                    <div class="user-profile">
+                        <div class="profile-header">
+                            <img src="<%= eleves[j].path %>" alt="Photo de profil" class="profile-picture">
+                            
+                            
+                        </div>
+                        
+                    </div> 
+                    
+    
+    
+                    
+                </div>
+              
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              
+              </div>
+            </div>
+          </div>
+        </div><!-- End Large Modal-->
+      
+      
+        <% }  %>
+    
+
+
+
+  <%- include('../footer') -%>

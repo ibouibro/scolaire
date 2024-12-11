@@ -1,0 +1,263 @@
+<%- include('header') -%>
+
+<main id="main" class="main">
+
+    
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+            <div class="pt-4 pb-2">
+                <h5 class="card-title text-center pb-0 fs-4">CLASSES</h5>
+                 </div>
+                 <div class="pt-4 pb-2">
+                    <button type="button" class="btn btn-primary col-lg-3" data-bs-toggle="modal" data-bs-target="#ajouter">
+                        créer une classe
+                      </button> </div>
+          
+          <div class="card">
+            <div class="card-body table-container">
+
+
+
+
+                <% if(locals?.message){ %>
+                      
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                      <i class="bi bi-check-circle me-1"></i>
+                      <%= message %> 
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+    
+                    <% } %>
+                   
+                  <% if(locals?.classes){ %>
+                  <table class="table datatable">
+                    <thead>
+                      <tr>
+                        
+                        
+                        <th>nom</th>
+                        <th>niveau</th>
+                        <th>inscription</th>
+                        <th>mensualite</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <%  for(var i=0;i < classes.length ; i++){  %>
+                      <tr>
+                        
+                        <td><%= classes[i].nom %></td>
+                        <td><%= classes[i].niveau %></td>
+                        <td><%= classes[i].inscription %></td>
+                        <td><%= classes[i].mensualite %></td>
+                       
+                        <td> 
+                          <% 
+                          let del= "del"+classes[i].id;
+                      let delx= "del"+classes[i].id+"x";
+                      let dlink = "/supprimer_classe/?id="+classes[i].id;
+                      let target = "#modifier"+classes[i].id;
+                            %>
+                          <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="<%= target %>">modifier</button>
+                        
+                          
+                           
+                          
+      
+                             <i class="bi bi-trash" data-bs-toggle="tooltip" data-bs-placement="top" title="supprimer" onclick="sup('<%= del %>')" ></i>
+                             <a href="<%= dlink %>" id="<%= delx %>"></a>
+                            
+                        
+                        </td>
+                           </tr>
+                    <% } %>
+                
+                    </tbody>
+                  </table>
+                  <% }else{ %>
+    
+                    Aucune classe trouvée 
+                    <% } %>
+                  <!-- End Table with stripped rows -->
+
+                 
+             </div>
+            </div>
+        </div>
+      </div>
+    </section>
+</main>
+
+
+<% for(var i=0;i < classes.length;i++){
+    
+    let target = "modifier"+classes[i].id; %>
+
+
+    <div class="modal fade" id="<%= target %>" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Modifier classe</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="row g-4 needs-validation" method="post" action="/modifier_classe">
+                  
+                    <div class="col-12">
+                        <label for="yourEmail" class="form-label"> nom classe </label>
+                        <input type="text" name="nom"  class="form-control" value="<%= classes[i].nom %>" required>
+                        <div class="invalid-feedback">Please enter your name</div>
+                       </div>
+                       <div class="col-12">
+                        <label for="yourEmail" class="form-label"> Niveau </label>
+                        <select name="niveau"   class="form-control"  required>
+                            <option value="<%= classes[i].niveau %>"><%= classes[i].niveau %></option>
+                            <% var niveaux = [];
+                            niveaux.push("élémentaire","moyen","secondaire");
+                            for(var j=0;j< niveaux.length;j++){
+                                if(niveaux[j] != classes[i].niveau ){
+                            %>
+                                <option value="<%= niveaux[j]  %>"><%= niveaux[j]  %></option>
+                            <% }} %>
+                        </select>
+                        
+                       </div>
+
+                       <div class="col-12">
+                        <label for="yourEmail" class="form-label"> montant mensualité </label>
+                        <input type="text" name="mensualite"  class="form-control" value="<%= classes[i].mensualite %>" required>
+                        <div class="invalid-feedback">Please enter your value</div>
+                       </div>
+
+                       <div class="col-12">
+                        <label for="yourEmail" class="form-label"> montant inscription </label>
+                        <input type="text" name="inscription"  class="form-control" value="<%= classes[i].inscription %>" required>
+                        <div class="invalid-feedback">Please enter your value</div>
+                       </div>
+
+                       <div class="col-12" id="last">
+                        <button class="btn btn-primary w-100" type="submit">Enregistrer</button>
+                      </div>
+                <input type="hidden" name ="id" value="<%= classes[i].id %>">
+                </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            
+            </div>
+          </div>
+        </div>
+      </div><!-- End Large Modal-->
+
+    <% } %>
+
+
+    <div class="modal fade" id="ajouter" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Créer classe</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="row g-4 needs-validation" method="post" action="/ajouter_classe">
+                  
+                    <div class="col-12">
+                        <label for="yourEmail" class="form-label"> nom classe </label>
+                        <input type="text" name="nom" id="nom_" oninput="verifier()"  class="form-control"  required>
+                       
+                        <div class="invalid-feedback">Please enter your name</div>
+                       </div>
+                       <div class="col-12">
+                        <label for="yourEmail" class="form-label"> Niveau </label>
+                        <select name="niveau" id ="niveau_" onchange="verifier()"  class="form-control"  required>
+                            <% var niveaux = [];
+                            niveaux.push("élémentaire","moyen","secondaire");
+                            for(var j=0;j< niveaux.length;j++){
+                                
+                            %>
+                                <option value="<%= niveaux[j]  %>"><%= niveaux[j]  %></option>
+                            <% }%>
+                        </select>
+                        
+                       </div>
+                       <div class="pt-4 pb-2" id="check_result">
+                    </div>
+
+                    <div class="col-12">
+                      <label for="yourEmail" class="form-label"> montant mensualité </label>
+                      <input type="text" name="mensualite"  class="form-control" required>
+                      <div class="invalid-feedback">Please enter your value</div>
+                     </div>
+
+                     <div class="col-12">
+                      <label for="yourEmail" class="form-label"> montant inscription </label>
+                      <input type="text" name="inscription"  class="form-control" required>
+                      <div class="invalid-feedback">Please enter your value</div>
+                     </div>
+
+
+                       <div class="col-12" id="last">
+                        <button class="btn btn-primary w-100" type="submit" id="submit_" >Enregistrer</button>
+                      </div>
+                
+                </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            
+            </div>
+          </div>
+        </div>
+      </div><!-- End Large Modal-->
+
+      <script>
+        async function verifier() {
+            try {
+              
+              const response = await fetch('/api/check_classe');
+              const data = await response.json();
+              let x = 0;
+              var nom = document.getElementById("nom_").value;
+              var niveau = document.getElementById("niveau_").value;
+              data.forEach(d=> {
+                if(true){
+                if(d.nom == nom && d.niveau ==niveau){
+                 x=x+1;
+                 let elm = document.getElementById("check_result");
+                 elm.style.color = "red";
+                 elm.innerHTML = "cette classe existe déjà";
+                 document.getElementById("submit_").disabled=true;
+                }
+      
+                if(x==0)
+                {
+                  let elm = document.getElementById("check_result");
+                 elm.style.color = "green";
+                 elm.innerHTML = "OK";
+                 document.getElementById("submit_").disabled=false;
+                }}
+              }  )                      
+      
+              
+             // stockTable.innerHTML=all;
+            } catch (error) {
+              console.error('Erreur lors de la récupération des données', error);
+            }
+      
+           
+          }
+        
+          function sup(x)
+                    {
+                      let s = x+"x";
+                      if(confirm("voulez-vous supprimer cette classe ?")== true){
+                        document.getElementById(s).click();
+                      }
+                    }
+        </script>
+
+<%- include('footer') -%>

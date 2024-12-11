@@ -1,0 +1,257 @@
+
+<%- include('../header') -%>
+
+
+  <main id="main" class="main">
+
+    
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+            <div class="pt-4 pb-2">
+                <h5 class="card-title text-center pb-0 fs-4">Matières</h5>
+                 </div>
+                 <div class="pt-4 pb-2">
+                    <button type="button" class="btn btn-primary col-lg-3" data-bs-toggle="modal" data-bs-target="#ajouter">
+                        créer une matière
+                      </button> </div>
+          
+          <div class="card">
+            <div class="card-body table-container">
+
+
+
+
+                <% if(locals?.message){ %>
+                      
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                      <i class="bi bi-check-circle me-1"></i>
+                      <%= message %> 
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+    
+                    <% } %>
+                   
+                  <% if(locals?.matieres){ %>
+                  <table class="table datatable">
+                    <thead>
+                        <tr>
+                          <th>Nom</th>
+              
+                          
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <%  for(var i=0;i < matieres.length ; i++){ 
+                          let target = "#modifier"+matieres[i].id;
+                          let del= "del"+matieres[i].id;
+                          let delx= "del"+matieres[i].id+"x";
+                          let dlink = "/supprimer_matiere/?id="+matieres[i].id; %>
+                        <tr>
+                     
+                          
+                          
+                          <td><%= matieres[i].nom %></td>
+                       
+      
+                          <td>
+                              <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="<%= target %>">modifier</button>
+                              <i class="bi bi-trash" style="margin-left:5px;" data-bs-toggle="tooltip" data-bs-placement="top" title="supprimer" onclick="sup('<%= del %>')" ></i>
+                              <a href="<%= dlink %>" id="<%= delx %>"></a>
+                             </td>    
+                       </tr>  <% } %>
+                  
+                      </tbody>
+                  </table>
+                  <% }else{ %>
+    
+                    Aucune matière trouvée 
+                    <% } %>
+                  <!-- End Table with stripped rows -->
+
+
+
+                  
+
+                 
+             </div>
+            </div>
+        </div>
+      </div>
+    </section>
+</main>
+
+<script>
+    function sup(x)
+    {
+      let s = x+"x";
+      if(confirm("voulez-vous supprimer cette matière ?")== true){
+        document.getElementById(s).click();
+      }
+    }
+  </script>
+
+  <% for(var i=0;i < matieres.length;i++){
+    
+    let target = "modifier"+matieres[i].id;
+    let nm = "nom_modifier"+matieres[i].id;
+    let nm1 = "nom_modifier"+matieres[i].id+"1"; 
+    let nm2 = "nom_modifier"+matieres[i].id+"2";
+    let nm3 = "nom_modifier"+matieres[i].id+"3"; %>
+
+    <div class="modal fade" id="<%= target %>" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Modifier matière</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="row g-4 needs-validation" method="post" action="/modifier_matiere">
+                  
+                    <div class="col-12">
+                        <label for="yourEmail" class="form-label"> nom matière </label>
+                        <input type="text" id="<%= nm %>" name="nom" oninput="verifier_m(event)"  class="form-control" value="<%= matieres[i].nom %>" required>
+                        <div class="invalid-feedback">Please enter your name</div>
+                       </div>
+                       <div class="col-12" id="<%= nm1 %>"></div>
+
+                       <div class="col-12" id="last">
+                        <button class="btn btn-primary w-100" id="<%= nm2 %>" type="submit">Enregistrer</button>
+                      </div>
+                <input type="hidden" id="<%= nm3 %>" name ="id" value="<%= matieres[i].id %>">
+                </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            
+            </div>
+          </div>
+        </div>
+      </div><!-- End Large Modal-->
+
+    <% } %>
+
+
+    <div class="modal fade" id="ajouter" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Créer matière</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="row g-4 needs-validation" method="post" action="/ajouter_matiere">
+                  
+                    <div class="col-12">
+                        <label for="yourEmail" class="form-label"> nom matière </label>
+                        <input type="text" name="nom" id="nom_ajouter" oninput="verifier_a(event)"  class="form-control"  required>
+                       
+                        <div class="invalid-feedback">Please enter your name</div>
+                       </div>
+                       <div class="col-12" id="check_result_ajouter"></div>
+
+
+                       <div class="col-12" id="last">
+                        <button class="btn btn-primary w-100" type="submit" id="submit_ajouter" >Enregistrer</button>
+                      </div>
+                
+                </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            
+            </div>
+          </div>
+        </div>
+      </div><!-- End Large Modal-->
+
+      <script>
+        async function verifier_a(event) {
+            try {
+              
+              const response = await fetch('/api/check_matiere');
+              const data = await response.json();
+              let x = 0;
+              var nom_a = document.getElementById("nom_ajouter").value;
+              
+              
+              data.forEach(d=> {
+                if(true){
+                if(d.nom == nom_a ){
+                 x=x+1;
+                 let elm = document.getElementById("check_result_ajouter");
+                 elm.style.color = "red";
+                 elm.innerHTML = "cette matière existe déjà";
+                 document.getElementById("submit_ajouter").disabled=true;
+                }
+                
+               
+      
+                if(x==0)
+                {
+                  let elm = document.getElementById("check_result_ajouter");
+                 elm.style.color = "green";
+                 elm.innerHTML = "";
+                 document.getElementById("submit_ajouter").disabled=false;
+
+               
+                }}
+              }  )                      
+      
+              
+             // stockTable.innerHTML=all;
+            } catch (error) {
+              console.error('Erreur lors de la récupération des données', error);
+            }
+      
+           
+          }
+
+          async function verifier_m(event) {
+            try {
+              
+              const response = await fetch('/api/check_matiere');
+              const data = await response.json();
+              let x = 0;
+             
+              data.forEach(d=> {
+                if(true){
+                    let s = event.target.id+"1";
+                    let s1 = event.target.id+"2";
+                let s2 = event.target.id+"3";
+                if(d.nom == event.target.value && document.getElementById(s2).value != d.id ){
+                 x=x+1;
+                 
+                 
+                 let elm = document.getElementById(s);
+                 elm.style.color = "red";
+                 elm.innerHTML = "cette matière existe déjà";
+                 document.getElementById(s1).disabled=true;
+                }
+      
+                if(x==0)
+                {
+                  
+
+                 let elm2 = document.getElementById(s);
+                 elm2.style.color = "green";
+                 elm2.innerHTML = "";
+                 document.getElementById(s1).disabled=false;
+                }}
+              }  )                      
+      
+              
+             // stockTable.innerHTML=all;
+            } catch (error) {
+              console.error('Erreur lors de la récupération des données', error);
+            }
+      
+           
+          }
+        
+          
+        </script>
+  <%- include('../footer') -%>

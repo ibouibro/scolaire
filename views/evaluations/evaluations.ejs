@@ -1,0 +1,328 @@
+<%- include('../header') -%>
+
+<main id="main" class="main">
+
+    
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+            <div class="pt-4 pb-2">
+                <h5 class="card-title text-center pb-0 fs-4">EVALUATIONS</h5>
+                 </div>
+                 <div class="pt-4 pb-2">
+                    <button type="button" class="btn btn-primary col-lg-3" data-bs-toggle="modal" data-bs-target="#ajouter">
+                        créer un devoir
+                      </button> </div>
+          
+          <div class="card">
+            <div class="card-body table-container">
+
+
+
+
+                <% if(locals?.message){ %>
+                      
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                      <i class="bi bi-check-circle me-1"></i>
+                      <%= message %> 
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+    
+                    <% } %>
+                   
+                  <% if(locals?.evaluations){ %>
+                  <table class="table datatable">
+                    <thead>
+                      <tr>
+                        
+                        
+                        <th>classe</th>
+                        <th>semestre</th>
+                        <th>matière</th>
+                        <th>type</th>
+                        <th>date</th>
+                        <th>date fin</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <%  for(var i=0;i < evaluations.length ; i++){  %>
+                      <tr>
+                        
+                        <td><%= evaluations[i].classe %> <%= evaluations[i].niveau %></td>
+                        <td><%= evaluations[i].semestre %></td>
+                        <td><%= evaluations[i].matiere %></td>
+                        <td><%= evaluations[i].type %></td>
+                        <td><%= evaluations[i].date %></td>
+                        <td><%= evaluations[i].date_fin %></td>
+                       
+                        <td> 
+                          <% 
+                         
+                      let dlink = "/voir_evaluation/?id="+evaluations[i].id+"&matiere="+evaluations[i].id_matiere;
+                      let target = "#modifier"+evaluations[i].id;
+                      
+                      
+
+                          %>
+                          <a href="<%= dlink %>" type="button" class="btn btn-warning btn-sm">voir</a>
+                          <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="<%= target %>">modifier</button>
+                        
+                        
+                        </td>
+                           </tr>
+                    <% } %>
+                
+                    </tbody>
+                  </table>
+                  <% }else{ %>
+    
+                    Aucune évaluation trouvée 
+                    <% } %>
+                  <!-- End Table with stripped rows -->
+
+                 
+             </div>
+            </div>
+        </div>
+      </div>
+    </section>
+</main>
+
+
+
+<% if(role == "enseignant" || role == "administrateur"){ %>
+    <div class="modal fade" id="ajouter" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Créer devoir</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="row g-4 needs-validation" method="post" action="/creer_devoir">
+                  
+                    <div class="col-12">
+                        <label for="yourEmail" class="form-label"> Date </label>
+                        <input type="date" name="date"  class="form-control"  required>
+                       
+                        <div class="invalid-feedback">Please enter your date</div>
+                       </div>
+                       <div class="col-12">
+                        <label for="yourEmail" class="form-label"> classe </label>
+                        <select name="classe" onchange="put_matiere(event)"  class="form-control"  required>
+                            <option value="">Choisir une classe</option>
+                            <% 
+                            for(var j=0;j< classes.length;j++){
+                                
+                            %>
+                                <option value="<%= classes[j].id_classe %>"><%= classes[j].nom %> <%= classes[j].niveau %></option>
+                            <% }%>
+                        </select>
+                        
+                       </div>
+
+                       <div class="col-12">
+                        <label for="yourEmail" class="form-label"> matière </label>
+                        <select name="matiere" id="bloc_m"   class="form-control"  required>
+                            
+                           
+                        </select>
+                        
+                       </div>
+
+                       <div class="col-12">
+                        <label for="yourEmail" class="form-label"> semestre </label>
+                        <select name="semestre"   class="form-control"  required>
+                            <option value="">Choisir un semestre</option>
+                           
+                                <option value="premier">premier</option>
+                                <option value="second">second</option>
+                            
+                        </select>
+                        
+                       </div>
+
+
+                       <div class="col-12" id="last">
+                        <button class="btn btn-primary w-100" type="submit" id="submit_" >Enregistrer</button>
+                      </div>
+                
+                </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            
+            </div>
+          </div>
+        </div>
+      </div><!-- End Large Modal-->
+
+      <% }%>
+
+      <%  for(var i=0; i < evaluations.length ; i++ ){ 
+        let target ="modifier"+evaluations[i].id;
+        let id = "id"+evaluations[i].id;
+        let id1 = "id"+evaluations[i].id+"1";  %>
+        <div class="modal fade" id="<%= target %>" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Modifier une évaluation</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="row g-4 needs-validation" method="post" action="/modifier_evaluation">
+                      
+                        <% if(evaluations[i].type == "devoir"){ %>
+
+                        <div class="col-12">
+                            <label for="yourEmail" class="form-label">Type d'évaluation : <%= evaluations[i].type %>   </label>
+                          <input type="hidden" name="type" value="<%= evaluations[i].type %>">
+                          <input type="hidden" name="id" value="<%= evaluations[i].id %>">
+                          </div>
+                        <div class="col-12">
+                            <label for="yourEmail" class="form-label"> Date </label>
+                            <input type="date" name="date" value="<%= evaluations[i].date %>" class="form-control"  required>
+                           
+                            <div class="invalid-feedback">Please enter your date</div>
+                           </div>
+                           <div class="col-12">
+                            <label for="yourEmail" class="form-label"> Date fin </label>
+                            <input type="date" name="date_fin" value="<%= evaluations[i].date_fin %>" class="form-control" >
+                           
+                            <div class="invalid-feedback">Please enter your date</div>
+                           </div>
+                           <div class="col-12">
+                            <label for="yourEmail" class="form-label"> classe </label>
+                            <select name="classe" id="<%= id %>" onchange="put_matiere1(event)"  class="form-control"  required>
+                                <option value="<%= evaluations[i].id_classe %>"><%= evaluations[i].classe %> <%= evaluations[i].niveau %></option>
+                                <% 
+                                for(var j=0;j< classes.length;j++){
+                                    if(evaluations[i].id_classe != classes[j].id_classe){
+                                    
+                                %>
+                                    <option value="<%= classes[j].id %>"><%= classes[j].nom %> <%= classes[j].niveau %></option>
+                                <% } } %>
+                            </select>
+                            
+                           </div>
+    
+                           <div class="col-12">
+                            <label for="yourEmail" class="form-label"> matière </label>
+                            <select name="matiere" id="<%= id1 %>"   class="form-control"  required>
+                                <option value="<%= evaluations[i].id_matiere %>"><%= evaluations[i].matiere %></option>
+                               
+                            </select>
+                            
+                           </div>
+    
+                           <div class="col-12">
+                            <label for="yourEmail" class="form-label"> semestre </label>
+                            <select name="semestre"   class="form-control"  required>
+                                <option value="<%= evaluations[i].semestre %>"><%= evaluations[i].semestre %></option>
+                                <% if(evaluations[i].semestre != "premier"){ %>
+                                    <option value="premier">premier</option>
+                                    <% } %>
+                                    <% if(evaluations[i].semestre != "second"){ %>
+                                        <option value="second">second</option>
+                                        <% } %>
+                            </select>
+                            
+                           </div>
+                           <% }else{ %>
+
+                            <div class="col-12">
+                                <label for="yourEmail" class="form-label">Type d'évaluation : <%= evaluations[i].type %>   </label>
+                               
+                                </div>
+                                <div class="col-12">
+                                    <label for="yourEmail" class="form-label">classe : <%= evaluations[i].classe %> <%= evaluations[i].niveau %>   </label>
+                                   
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="yourEmail" class="form-label">matière : <%= evaluations[i].matiere %>   </label>
+                                       
+                                        </div>
+                                        <div class="col-12">
+                                            <label for="yourEmail" class="form-label">semestre : <%= evaluations[i].semestre %>   </label>
+                                           
+                                            </div>
+
+                                <input type="hidden" name="type" value="<%= evaluations[i].type %>">
+                              <input type="hidden" name="id" value="<%= evaluations[i].id %>">
+                              <input type="hidden" name="matiere" value="<%= evaluations[i].id_matiere %>">
+                          <input type="hidden" name="classe" value="<%= evaluations[i].id_classe %>">
+                          <input type="hidden" name="semestre" value="<%= evaluations[i].semestre %>">
+                              
+                            <div class="col-12">
+                                <label for="yourEmail" class="form-label"> Date </label>
+                                <input type="date" name="date" value="<%= evaluations[i].date %>" class="form-control"  required>
+                               
+                                <div class="invalid-feedback">Please enter your date</div>
+                               </div>
+                               <div class="col-12">
+                                <label for="yourEmail" class="form-label"> Date fin </label>
+                                <input type="date" name="date_fin" value="<%= evaluations[i].date_fin %>" class="form-control" >
+                               
+                                <div class="invalid-feedback">Please enter your date</div>
+                               </div>
+                              
+        
+                               
+        
+                               
+                            <% } %>
+    
+                           <div class="col-12" id="last">
+                            <button class="btn btn-primary w-100" type="submit" >Enregistrer</button>
+                          </div>
+                    
+                    </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                
+                </div>
+              </div>
+            </div>
+          </div><!-- End Large Modal-->
+    
+
+        <% } %>
+
+     <script>
+        function put_matiere(event){
+
+            let matieres =  <%- JSON.stringify(matieres) %>;
+            let id_classe = event.target.value;
+            let span = `<option value="">Choisir une matière</option>`;
+            matieres.forEach(element => {
+                
+                if(id_classe == element.id_classe)
+            {
+                span = span + `<option value="${element.id_matiere}">${element.nom}</option>`;
+            }
+            });
+
+            document.getElementById("bloc_m").innerHTML = span;
+        }
+
+        function put_matiere1(event){
+
+let matieres =  <%- JSON.stringify(matieres) %>;
+let id_classe = event.target.value;
+let span = `<option value="">Choisir une matière</option>`;
+matieres.forEach(element => {
+    if(id_classe == element.id_classe)
+{
+    span = span + `<option value="${element.id}">${element.nom}</option>`;
+}
+});
+
+let s = event.target.id+"1";
+document.getElementById(s).innerHTML = span;
+}
+     </script>
+<%- include('../footer') -%>

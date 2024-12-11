@@ -1,0 +1,182 @@
+<%- include('header') -%>
+
+<main id="main" class="main">
+    <div class="container" style="display:flex;justify-content:space-around;">
+
+      <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-lg-12 col-md-12 d-flex flex-column align-items-center justify-content-center">
+
+              
+
+              <div class="card mb-8">
+
+                <div class="card-body">
+
+                  <div class="pt-4 pb-2">
+                    <h5 class="card-title text-center pb-0 fs-4">Préinscription</h5>
+                    <p class="text-center small">Insérer les détails pour faire une préinscription</p>
+                  </div>
+
+                  <form class="row g-4 needs-validation" method="post" action="/ajouter_preinscription" enctype="multipart/form-data">
+                    <% if(locals?.message){ %>
+                      
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                          <i class="bi bi-check-circle me-1"></i>
+                          <%= message %> 
+                          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+
+                        <% } %>
+
+                        <% if(locals?.error){ %>
+                          <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-triangle me-1"></i>
+                            <%= error %> 
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                          </div>
+                          <% } %>
+                          <div class="col-12">
+                            <label for="yourEmail" class="form-label"> Email</label>
+                            <input type="email" name="email" oninput="verifier(event)" class="form-control" id="yourEmail" required>
+                            <div class="invalid-feedback">Please enter a valid Email adddress!</div>
+                            <div class="col-12" id = "check_result"></div>
+                                
+                          </div>
+                          <div class="col-12">
+                            <label for="yourEmail" class="form-label"> nom </label>
+                            <input type="text" name="nom"  class="form-control" id="yourEmail" required>
+                            <div class="invalid-feedback">Please enter your name</div>
+                           </div>
+                          <div class="col-12">
+                            <label for="" class="form-label"> prénom </label>
+                            <input type="text" name="prenom" class="form-control"  required>
+                            <div class="invalid-feedback">Please enter your last name</div>
+                          </div>
+                    
+
+                    <div class="col-12">
+                        <label for="yourEmail" class="form-label"> Mot de passe </label>
+                        <input type="password" name="password" class="form-control" required>
+                        <div class="invalid-feedback">Please enter your password</div>
+                      </div>
+
+                    <div class="col-12">
+                        <label for="yourEmail" class="form-label"> Téléphone</label>
+                        <input type="number" name="tel" class="form-control" id="yourEmail" >
+                        <div class="invalid-feedback">Please enter a valid phone number!</div>
+                      </div>
+                      <div class="col-12">
+                        <label for="yourName" class="form-label">Classe demandée</label>
+                        <select class="form-select"   name="classe" required aria-label="Default select example">
+                          <option value="">Choisir une classe</option>
+                        <% for (var i=0;i< classe.length;i++){ %>  
+                     <option value="<%= classe[i].id %>"><%= classe[i].nom %> <%= classe[i].niveau %></option>
+                        <% } %>
+                        </select>
+                    </div>
+                  
+                    <div class="col-12">
+                        <label for="yourName" class="form-label">Ajoutez les documents</label>
+                        <input type="file" multiple required name="doc" accept=".pdf" class="form-control">
+    
+                    </div>
+                    
+                    <div class="col-12">
+                        <label for="yourName" class="form-label">Photo de l'élève</label>
+                        <input type="file"  required name="photo_e" accept=".jpg,.png,.jpeg" class="form-control">
+    
+                    </div>
+
+
+                    <div class="col-12">
+                        <label for="yourEmail" class="form-label"> nom du parent </label>
+                        <input type="text" name="nom_parent" class="form-control" id="yourEmail" required>
+                        <div class="invalid-feedback">Please enter your name</div>
+                      </div>
+                      <div class="col-12">
+                        <label for="yourEmail" class="form-label"> prénom du parent </label>
+                        <input type="text" name="prenom_parent" class="form-control" id="yourEmail" required>
+                        <div class="invalid-feedback">Please enter your last name</div>
+                      </div>
+                <div class="col-12">
+                  <label for="yourEmail" class="form-label"> Email du parent</label>
+                  <input type="email" name="email_parent" class="form-control" id="yourEmail" required>
+                  <div class="invalid-feedback">Please enter a valid Email adddress!</div>
+                </div> 
+                 <div class="col-12">
+                    <label for="yourEmail" class="form-label"> Téléphone du parent</label>
+                    <input type="number" name="tel_parent" class="form-control" id="yourEmail" >
+                    <div class="invalid-feedback">Please enter a valid phone number!</div>
+                  </div>
+
+                  <div class="col-12">
+                    <label for="yourName" class="form-label">Photo du parent</label>
+                    <input type="file" required name="photo_p" accept=".jpg,.png,.jpeg" class="form-control">
+
+                </div>
+
+                    <div class="col-12" id="last">
+                      <button class="btn btn-primary w-100" type="submit" id="submit_">Enregistrer</button>
+                    </div>
+                    
+                  </form>
+                </div>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+</main><!-- End #main -->
+<script>
+    async function verifier(event) {
+        try {
+          
+          const response = await fetch('/api/check_email');
+          const data = await response.json();
+          let x = 0;
+          data.forEach(d=> {
+            if(validateEmail(event.target.value)==true){
+            if(d.email == event.target.value){
+             x=x+1;
+             let elm = document.getElementById("check_result");
+             elm.style.color = "red";
+             elm.innerHTML = "cet email a déjà un compte";
+             document.getElementById("submit_").disabled=true;
+            }
+  
+            if(x==0)
+            {
+              let elm = document.getElementById("check_result");
+             elm.style.color = "green";
+             elm.innerHTML = "email accepté";
+             document.getElementById("submit_").disabled=false;
+            }}else{
+              let elm = document.getElementById("check_result");
+             elm.style.color = "red";
+             elm.innerHTML = "email invalid";
+             document.getElementById("submit_").disabled=true;
+            }
+          }  )                      
+  
+          
+         // stockTable.innerHTML=all;
+        } catch (error) {
+          console.error('Erreur lors de la récupération des données de stock', error);
+        }
+  
+       
+      }
+      function validateEmail(email) {
+    var re = /\S+@\S+\.\S+/;
+    return re.test(email);
+  }
+    </script>
+  
+  <%- include('footer') -%>
